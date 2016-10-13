@@ -28,6 +28,21 @@ def parse_extra_frontend_settings(envvars):
                     settings_dict[port] = settings
     return settings_dict
 
+def parse_extra_backend_settings(envvars):
+    settings_dict = {}
+    if isinstance(envvars, os._Environ) or isinstance(envvars, dict):
+        backend_settings_pattern = re.compile(r"^EXTRA_BACKEND_SETTINGS_(\w+)$")
+        for k, v in envvars.iteritems():
+            match = backend_settings_pattern.match(k)
+            if match:
+                name = match.group(1).lower()
+                settings = [x.strip().replace("\,", ",") for x in re.split(r'(?<!\\),', v.strip())]
+                if name in settings_dict:
+                    settings_dict[name].extend(settings)
+                else:
+                    settings_dict[name] = settings
+    return settings_dict
+
 
 # envvar
 ADDITIONAL_SERVICES = os.getenv("ADDITIONAL_SERVICES")
@@ -41,6 +56,7 @@ DEFAULT_SSL_CERT = os.getenv("DEFAULT_SSL_CERT") or os.getenv("SSL_CERT")
 EXTRA_BIND_SETTINGS = parse_extra_bind_settings(os.getenv("EXTRA_BIND_SETTINGS"))
 EXTRA_DEFAULT_SETTINGS = os.getenv("EXTRA_DEFAULT_SETTINGS")
 EXTRA_FRONTEND_SETTINGS = parse_extra_frontend_settings(os.environ)
+EXTRA_BACKEND_SETTINGS = parse_extra_backend_settings(os.environ)
 EXTRA_GLOBAL_SETTINGS = os.getenv("EXTRA_GLOBAL_SETTINGS")
 EXTRA_SSL_CERT = os.getenv("EXTRA_SSL_CERTS")
 EXTRA_ROUTE_SETTINGS=os.getenv("EXTRA_ROUTE_SETTINGS", "")

@@ -1,6 +1,6 @@
 import re
 
-from haproxy.config import HEALTH_CHECK, HTTP_BASIC_AUTH, EXTRA_ROUTE_SETTINGS
+from haproxy.config import HEALTH_CHECK, HTTP_BASIC_AUTH, EXTRA_ROUTE_SETTINGS, EXTRA_BACKEND_SETTINGS
 from haproxy.utils import get_service_attribute
 
 
@@ -19,6 +19,12 @@ def get_backend_section(details, routes, vhosts, service_alias, routes_added):
     backend_routes = get_backend_routes(route_setting, is_sticky, routes, routes_added, service_alias)
     backend.extend(backend_routes)
     return backend
+
+def get_extra_backend_names():
+    return EXTRA_BACKEND_SETTINGS.keys()
+
+def get_extra_backend_settings(name):
+    return EXTRA_BACKEND_SETTINGS[name]
 
 
 def get_backend_routes(route_setting, is_sticky, routes, routes_added, service_alias):

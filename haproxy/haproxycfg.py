@@ -334,4 +334,9 @@ class Haproxy(object):
                     cfg["backend SERVICE_%s" % service_alias] = backend
                 else:
                     cfg["backend default_service"] = backend
+
+        # Add extra configuration, useful for non-dockercloud server forwarding
+        for extra_name in BackendHelper.get_extra_backend_names():
+            cfg["backend extra_%s" % extra_name] = BackendHelper.get_extra_backend_settings(extra_name)
+
         return cfg
